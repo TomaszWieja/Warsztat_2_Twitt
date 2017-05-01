@@ -1,109 +1,106 @@
 <?php
 
 class User {
+
     private $id;
     private $email;
     private $username;
     private $hashedPassword;
-    
+
     public function __construct() {
         $this->id = -1;
         $this->email = "";
         $this->username = "";
         $this->hashedPassword = "";
     }
-    
+
     public function getId() {
         return $this->id;
     }
-    
-    function getEmail() {
+
+    public function getEmail() {
         return $this->email;
     }
 
-    function getUsername() {
-        return $this->username;
-    }
-
-    function getHashedPassword() {
-        return $this->hashedPassword;
-    }
-
-    function setEmail($email) {
+    public function setEmail($email) {
         $this->email = $email;
     }
 
-    function setUsername($username) {
+    public function getUsername() {
+        return $this->username;
+    }
+
+    public function setUsername($username) {
         $this->username = $username;
     }
 
-    function setHashedPassword($password) {
+    public function setHashedPassword($password) {
         $this->hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     }
-    
-    public function saveToDB( mysqli $connection) {
-        var_dump($this);
+
+    public function saveToDB(mysqli $connection) {
         if ($this->id == -1) {
-            $sql = "INSERT INTO Users (email, username, hashed_password) VALUES"
-                    . "('$this->email', '$this->username', '$this->hashedPassword')";
+            $sql = "INSERT INTO Users (email,username,hashed_password) VALUES "
+                    . "('$this->email','$this->username','$this->hashedPassword')";
             $result = $connection->query($sql);
-            if ($result == TRUE) {
+            if ($result == true) {
                 $this->id = $connection->insert_id;
-                return TRUE;
+                return true;
             }
         } else {
-                $sql = "UPDATE Users SET email = '$this->email', username = '$this->username',"
-                        . " hashed_password = '$this->hashedPassword' WHERE id = $this->id";
-                $result = $connection->query($sql);
-                var_dump($result);
-                if ($result == TRUE) {
-                    return TRUE;
-                }
+            $sql = "UPDATE Users SET email = '$this->email', username = '$this->username',"
+                    . " hashed_password = '$this->hashedPassword'"
+                    . "WHERE id = $this->id";
+            $result = $connection->query($sql);
+            if ($result == true) {
+                return true;
+            }
         }
-        
         return false;
     }
-    
-    public function delete(mysqli $connection) {
+
+    public function delete (mysqli $connection) {
         if ($this->id != -1) {
             $sql = "DELETE FROM Users WHERE id = $this->id";
             $result = $connection->query($sql);
-            if ($result == TRUE) {
-             $this->id = -1;
-             return TRUE;
+            if ($result == true) {
+                $this->id = -1;
+                return true;
+            } else {
+                return false;
             }
-            return FALSE;
         }
-        return TRUE;
+        return true;
     }
-
-
-
-
     
-    
-    static public function loadUserById(mysqli $connection, $id) {
+    public function login() {
+        $_SESSION['user_id'] = $this->id;
+    }
+            
+            
+            
+    static public function loadUserByID(mysqli $connection, $id) {
         $sql = "SELECT * FROM Users WHERE id = $id";
         $result = $connection->query($sql);
-        if ($result == TRUE && $result->num_rows == 1) { //num_rows zwraca ile rzędów zawiera wynik
+        if ($result == true && $result->num_rows == 1) {
             $row = $result->fetch_assoc();
-            
+
             $loadedUser = new User();
             $loadedUser->id = $row['id'];
             $loadedUser->email = $row['email'];
             $loadedUser->username = $row['username'];
             $loadedUser->hashedPassword = $row['hashed_password'];
-            
+
             return $loadedUser;
         }
-        return NULL;
+        return null;
     }
-    
+
     static public function loadAllUsers(mysqli $connection) {
         $sql = "SELECT * FROM Users";
         $ret = array();
         $result = $connection->query($sql);
-        if ($result == TRUE && $result->num_rows > 0) {
+        if ($result == true && $result->num_rows > 0) {
             foreach ($result as $row) {
                 $loadedUser = new User();
                 $loadedUser->id = $row['id'];
@@ -113,11 +110,8 @@ class User {
                 $ret[] = $loadedUser;
             }
         }
+        
         return $ret;
     }
     
-
 }
-
-
-
