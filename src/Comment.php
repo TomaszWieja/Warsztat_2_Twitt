@@ -95,5 +95,6 @@ class Comment {
         if ($result == TRUE) {
             $this->id = $connection->insert_id;
             return TRUE;
+        }
     }
 }
