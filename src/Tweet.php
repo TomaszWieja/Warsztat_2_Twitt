@@ -9,9 +9,9 @@ class Tweet {
     
     public function __construct() {
         $this->id = -1;
-        $this->userId = "";
+        $this->userId = 0;
         $this->text = "";
-        $this->creationDate = "";
+        $this->creationDate = NULL;
     }
     
     function setUserId($userId) {

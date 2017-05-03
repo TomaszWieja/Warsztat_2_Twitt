@@ -4,6 +4,7 @@
 //obsługa formularza dodawania wpisu
 
 //pobieranie listy wpisu
+session_start();
 require_once 'src/Tweet.php';
 require_once 'utils/connection.php';
 
@@ -11,12 +12,15 @@ $allTweets = Tweet::loadAllTweets($conn);
 foreach ($allTweets as $row) {
     echo $row['text'] . "<br>";
 }
+if (isset($_SESSION['user_id'])) {
+    echo    '<form>
+                <input type="text" name="text"><br>
+                <input type="submit" value="Wyślij wiadomość">
+            </form>';
+}
 
 ?>
-<form>
-    <input type="text" name="text"><br>
-    <input type="submit" value="Wyślij wiadomość">
-</form>
+
 <!--  Formualrz dodawania wpisu  -->
 
 <!--  Link do wiadomości zalogowanego użytkownika  -->
