@@ -1,9 +1,9 @@
 <?php
 
-$baseName = "cinemas_ex";
+$baseName = "Warsztat_2_Twitter";
 $serverName = "localhost";
 $userName = "root";
-$password = "";
+$password = "coderslab";
 
 $conn = new mysqli($serverName, $userName, $password, $baseName);
 
