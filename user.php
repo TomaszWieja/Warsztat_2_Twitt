@@ -14,6 +14,7 @@ require_once 'utils/connection.php';
 require_once 'utils/check_login.php';
 require_once 'src/Tweet.php';
 require_once 'src/User.php';
+require_once 'src/Comment.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $userId = (int) $_GET['userId'];
@@ -22,9 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $userName = $user->getUsername();
         echo "Użytkownik " . $userName . "<hr><br>";
         $tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $userId);
-
+        
         foreach ($tweetsByUserId as $row) {
             echo $row->getText() . $row->getCreationDate() . "<br>";
+            $commentsByTweetId = Comment::loadAllCommentsByPostId($conn, $row->getId());
+            
         }
     }
 }

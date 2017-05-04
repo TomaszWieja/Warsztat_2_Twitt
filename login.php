@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 echo "Błędny login lub hasło.";
             }
         } else {
-            echo "Podany email nie jest zarejestrowany";
+            echo "Podany email jest już zarejestrowany";
         }
     } else {
         echo "Proszę wypełnić wszytskie pola";
