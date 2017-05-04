@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $comment->setText($_POST['text']);
         $comment->setPostId($_GET['postId']);
         $comment->setUserId($_SESSION['user_id']);
-        $comment->setCreationDate(date('Y-m-d H:m:s'));
+        $comment->setCreationDate(date('Y-m-d H:i:s'));
         $saveToDb = $comment->saveToDB($conn);
         header("location: post.php?postId=" . $_GET['postId']);
     }

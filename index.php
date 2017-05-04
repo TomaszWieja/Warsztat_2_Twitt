@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $newTweet = new Tweet();
         $newTweet->setText($_POST['text']);
         $newTweet->setUserId($_SESSION['user_id']);
-        $newTweet->setCreationDate(date('Y-m-d H:m:s'));
+        $newTweet->setCreationDate(date('Y-m-d H:i:s'));
         $newTweet->saveToDB($conn);
     }
 }

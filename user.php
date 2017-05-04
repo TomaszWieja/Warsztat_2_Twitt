@@ -15,6 +15,25 @@ require_once 'utils/check_login.php';
 require_once 'src/Tweet.php';
 require_once 'src/User.php';
 require_once 'src/Comment.php';
+require_once 'src/Message.php';
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    $newmessage = $_POST['text'];
+    if ($newmessage != "") {
+        $userId = $_POST['userId'];
+        $newMessage = new Message();
+        $newMessage->setSenderId($_SESSION['user_id']);
+        $newMessage->setReceiverId($userId);
+        $newMessage->setCreationDate(date('Y-m-d H:i:s'));
+        $newMessage->setText($_POST['text']);
+        $newMessage->saveToDB($conn);
+
+        if ($newMessage) {
+            echo "Wiadomość została wysłana<br>";
+            echo "<a href='user.php?userId=" . $userId . "'>Powrót do strony użytkownika</a>";
+        }
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $userId = (int) $_GET['userId'];
@@ -22,19 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $user = User::loadUserByID($conn, $userId);
         $userName = $user->getUsername();
         echo "Użytkownik " . $userName . "<hr><br>";
-        $tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $userId);
-        
+        $tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $userId);    
         foreach ($tweetsByUserId as $row) {
             echo $row->getText() . $row->getCreationDate() . "<br>";
             $commentsByTweetId = Comment::loadAllCommentsByPostId($conn, $row->getId());
-            
+            echo "Ilość komentarzy: " . count($commentsByTweetId) . "<br>";
         }
+        echo '<form action="" method="post">  
+                <input type="text" name="text"><br>
+                <input type="hidden" name="userId" value="' . $userId . '">
+                <input type="submit" value="Edytuj">
+            </form>';
     }
 }
-?>
 
+?>
 <!--Formularz do wysyłania wiadomości do użytkownika-->
 
 <!--Lista wpisów użytkownika-->
-
-

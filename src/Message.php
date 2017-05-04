@@ -119,7 +119,7 @@ class Message {
     }
     
     public function saveToDB(mysqli $connection) {
-        $sql = "INSERT INTO Messages(senderId, receiverId, text, creationDate, see) VALUES($this->senderId, $this->receiverId, '$this->text', $this->creationDate, $this->see)";
+        $sql = "INSERT INTO Messages(senderId, receiverId, text, creationDate) VALUES($this->senderId, $this->receiverId, '$this->text', '$this->creationDate')";
         $result = $connection->query($sql);
         if ($result == TRUE) {
             $this->id = $connection->insert_id;
