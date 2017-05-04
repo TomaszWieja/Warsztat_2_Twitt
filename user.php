@@ -13,11 +13,20 @@ session_start();
 require_once 'utils/connection.php';
 require_once 'utils/check_login.php';
 require_once 'src/Tweet.php';
+require_once 'src/User.php';
 
-$tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $_SESSION['user_id']);
+if ($_SERVER['REQUEST_METHOD'] == "GET") {
+    $userId = (int) $_GET['userId'];
+    if (is_integer($userId)) {
+        $user = User::loadUserByID($conn, $userId);
+        $userName = $user->getUsername();
+        echo "Użytkownik " . $userName . "<hr><br>";
+        $tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $userId);
 
-foreach ($tweetsByUserId as $row) {
-    echo $row['text'] . "<br>";
+        foreach ($tweetsByUserId as $row) {
+            echo $row->getText() . $row->getCreationDate() . "<br>";
+        }
+    }
 }
 ?>
 

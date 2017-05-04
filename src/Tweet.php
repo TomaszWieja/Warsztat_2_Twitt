@@ -77,7 +77,7 @@ class Tweet {
     }
     
     static public function loadAllTweets(mysqli $connection) {
-        $sql = "SELECT * FROM Tweets";
+        $sql = "SELECT * FROM Tweets ORDER BY creationDate DESC";
         $result = $connection->query($sql);
         $ret = array();
         if ($result == TRUE && $result->num_rows > 0) {
@@ -95,7 +95,7 @@ class Tweet {
     
     public function saveToDB(mysqli $connection) {
         
-        $sql = "INSERT INTO Tweets(userId, text, creationDate) VALUES($this->userId, '$this->text', $this->creationDate)";
+        $sql = "INSERT INTO Tweets(userId, text, creationDate) VALUES($this->userId, '$this->text', '$this->creationDate')";
         $result = $connection->query($sql);
         if ($result == TRUE) {
             $this->id = $connection->insert_id;

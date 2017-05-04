@@ -71,7 +71,7 @@ class Comment {
     }
     
     static public function loadAllCommentsByPostId(mysqli $connection, $postId) {
-        $sql = "SELECT * FROM Comments ORDER BY creationDate WHERE postId = $postId";
+        $sql = "SELECT * FROM Comments WHERE postId = $postId";
         $result = $connection->query($sql);
         $ret = array();
         if ($result == TRUE && $result->num_rows > 0) {
@@ -90,7 +90,7 @@ class Comment {
     }
     
     public function saveToDB(mysqli $connection) {
-        $sql = "INSERT INTO Comments(userId, postId, creationDate, text) VALUES($this->userId, $this->postId, $this->creationDate, '$this->text')";
+        $sql = "INSERT INTO Comments(userId, postId, creationDate, text) VALUES($this->userId, $this->postId, '$this->creationDate', '$this->text')";
         $result = $connection->query($sql);
         if ($result == TRUE) {
             $this->id = $connection->insert_id;

@@ -37,6 +37,10 @@ class User {
     public function setHashedPassword($password) {
         $this->hashedPassword = password_hash($password, PASSWORD_BCRYPT);
     }
+    
+    public function getHashedPassword() {
+        return $this->hashedPassword;
+    }
 
     public function saveToDB(mysqli $connection) {
         if ($this->id == -1) {
@@ -76,9 +80,10 @@ class User {
     public function login() {
         $_SESSION['user_id'] = $this->id;
     }
-            
-            
-            
+    public function logout() {
+        unset($_SESSION['user_id']);
+    }
+                    
     static public function loadUserByID(mysqli $connection, $id) {
         $sql = "SELECT * FROM Users WHERE id = $id";
         $result = $connection->query($sql);
@@ -114,6 +119,20 @@ class User {
         return $ret;
     }
     
-    
+    static public function loadUserByEmail(mysqli $connection, $email) {
+        $sql = "SELECT * FROM Users WHERE email = '$email'";
+        $result = $connection->query($sql);
+        if ($result == true && $result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            
+            $loadedUser = new User();
+            $loadedUser->id = $row['id'];
+            $loadedUser->email = $row['email'];
+            $loadedUser->username = $row['username'];
+            $loadedUser->hashedPassword = $row['hashed_password'];
+            return $loadedUser;
+        }
+        return FALSE;
+    }
     
 }
