@@ -17,6 +17,13 @@ require_once 'src/User.php';
 require_once 'src/Comment.php';
 require_once 'src/Message.php';
 
+$userLogged = User::loadUserByID($conn, $_SESSION['user_id']);
+echo "Jesteś zalogowany jako: " . $userLogged->getUsername()
+        . "<br><a href='messages.php'>Twoje wiadomości</a>"
+        . "<br><a href='index.php'>Powrót do strony głównej</a>"
+        . "<br><a href='logout.php'>Wyloguj się</a>"
+        . "<hr>";
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $newmessage = $_POST['text'];
     if ($newmessage != "") {
@@ -40,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     if (is_integer($userId)) {
         $user = User::loadUserByID($conn, $userId);
         $userName = $user->getUsername();
-        echo "Użytkownik " . $userName . "<hr><br>";
+        echo "Aktywność użytkownika: " . $userName . "<hr>";
         $tweetsByUserId = Tweet::loadAllTweetsByUserId($conn, $userId);    
         foreach ($tweetsByUserId as $row) {
             echo $row->getText() . $row->getCreationDate() . "<br>";
@@ -50,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         echo '<form action="" method="post">  
                 <input type="text" name="text"><br>
                 <input type="hidden" name="userId" value="' . $userId . '">
-                <input type="submit" value="Edytuj">
+                <input type="submit" value="Wyślij wiadomość">
             </form>';
     }
 }

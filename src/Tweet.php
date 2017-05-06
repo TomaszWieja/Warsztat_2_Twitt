@@ -95,13 +95,20 @@ class Tweet {
     
     public function saveToDB(mysqli $connection) {
         
-        $sql = "INSERT INTO Tweets(userId, text, creationDate) VALUES($this->userId, '$this->text', '$this->creationDate')";
-        $result = $connection->query($sql);
-        if ($result == TRUE) {
-            $this->id = $connection->insert_id;
-            return TRUE;
+        //$sql = "INSERT INTO Tweets(userId, text, creationDate) VALUES($this->userId, '$this->text', '$this->creationDate')";
+        //$result = $connection->query($sql);
+        //if ($result == TRUE) {
+        //    $this->id = $connection->insert_id;
+        //    return TRUE;
+        //}
+        $sql = "INSERT INTO Tweets(userId, text, creationDate) VALUES(?, ?, ?)";
+        $result =$connection->prepare($sql);
+        $result->bind_param("sss", $this->userId, $this->text, $this->creationDate);
+        $result->execute();
+        if ($result == true) {
+            return true;
         }
-        
-    }
+        return FALSE;
+    } 
 }
 

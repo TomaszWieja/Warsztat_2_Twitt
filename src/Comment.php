@@ -90,11 +90,19 @@ class Comment {
     }
     
     public function saveToDB(mysqli $connection) {
-        $sql = "INSERT INTO Comments(userId, postId, creationDate, text) VALUES($this->userId, $this->postId, '$this->creationDate', '$this->text')";
-        $result = $connection->query($sql);
-        if ($result == TRUE) {
-            $this->id = $connection->insert_id;
-            return TRUE;
+        //$sql = "INSERT INTO Comments(userId, postId, creationDate, text) VALUES($this->userId, $this->postId, '$this->creationDate', '$this->text')";
+        //$result = $connection->query($sql);
+        //if ($result == TRUE) {
+        //    $this->id = $connection->insert_id;
+        //    return TRUE;
+        //}
+        $sql = "INSERT INTO Comments(userId, postId, creationDate, text) VALUES(?, ?, ?, ?)";
+        $result = $connection->prepare($sql);
+        $result->bind_param("ssss", $this->userId, $this->postId, $this->creationDate, $this->text);
+        $result->execute();
+        if ($result == true) {
+            return true;
         }
+        return FALSE;
     }
 }

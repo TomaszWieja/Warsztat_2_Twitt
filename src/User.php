@@ -44,18 +44,34 @@ class User {
 
     public function saveToDB(mysqli $connection) {
         if ($this->id == -1) {
+            //$sql = "INSERT INTO Users (email,username,hashed_password) VALUES "
+              //      . "('$this->email','$this->username','$this->hashedPassword')";
+            //$result = $connection->query($sql);
+            //if ($result == true) {
+              //  $this->id = $connection->insert_id;
+               // return true;
             $sql = "INSERT INTO Users (email,username,hashed_password) VALUES "
-                    . "('$this->email','$this->username','$this->hashedPassword')";
-            $result = $connection->query($sql);
+                    . "(?,?,?)";
+            $result = $connection->prepare($sql);
+            $result->bind_param("sss", $this->email, $this->username, $this->hashedPassword);
+            $result->execute();
             if ($result == true) {
                 $this->id = $connection->insert_id;
                 return true;
             }
         } else {
-            $sql = "UPDATE Users SET email = '$this->email', username = '$this->username',"
-                    . " hashed_password = '$this->hashedPassword'"
-                    . "WHERE id = $this->id";
-            $result = $connection->query($sql);
+            //$sql = "UPDATE Users SET email = '$this->email', username = '$this->username',"
+            //        . " hashed_password = '$this->hashedPassword'"
+            //        . "WHERE id = $this->id";
+            //$result = $connection->query($sql);
+            //if ($result == true) {
+            //    return true;
+            $sql = "UPDATE Users SET email = ?, username = ?,"
+                    . " hashed_password = ? "
+                    . "WHERE id = ?";
+            $result = $connection->prepare($sql);
+            $result->bind_param("ssss", $this->email, $this->username, $this->hashedPassword, $this->id);
+            $result->execute();
             if ($result == true) {
                 return true;
             }

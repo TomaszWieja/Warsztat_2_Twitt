@@ -6,7 +6,11 @@ require_once 'src/User.php';
 require_once 'utils/connection.php';
 
 $userLogged = User::loadUserByID($conn, $_SESSION['user_id']);
-echo "Jesteś zalogowany jako: " . $userLogged->getUsername() . "<br><a href='edit_user.php'>Edytuj profil</a><br><a href='logout.php'>Wyloguj się</a><hr><br>";
+echo "Jesteś zalogowany jako: " . $userLogged->getUsername() . 
+        "<br><a href='messages.php'>Twoje wiadomości</a>"
+        . "<br><a href='edit_user.php'>Edytuj profil</a>"
+        . "<br><a href='logout.php'>Wyloguj się</a>"
+        . "<hr>";
 
 ?>
 <!--  Formualrz dodawania wpisu  -->

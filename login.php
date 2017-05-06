@@ -4,7 +4,7 @@
 //jeśli tak - zaloguj
 //jeśli nie - wyświetl komunikat
 session_start();
-require_once 'src/User.php';;
+require_once 'src/User.php';
 require_once 'utils/connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <!--link do rejestracji konta-->
 <form action="" method="post">
+    <label>Podaj email</label>
     <input type="email" name="email"><br>
+    <label>Podaj hasło</label>
     <input type="password" name="password"><br>
     <input type="submit" value="Zaloguj">
 </form>

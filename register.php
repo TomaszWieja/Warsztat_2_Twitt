@@ -32,8 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 ?>
 <!--Formularz do rejestracji użytkownika-->
 <form action="" method="post">
+    <label>Email: </label>
     <input type="email" name="email"><br>
+    <label>Nazwa użytkownika: </label>
     <input type="text" name="username"><br>
+    <label>Hasło: </label>
     <input type="password" name="password"><br>
     <input type="submit" value="Utwórz użytkownika">
 </form>
+<a href="index.php">Powrót na stronę główną</a>

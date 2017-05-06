@@ -63,7 +63,7 @@ class Message {
     }
 
     static public function loadMessagesBySenderId(mysqli $connection, $senderId) {
-        $sql = "SELECT * FROM Messages WHERE senderId = $senderId";
+        $sql = "SELECT * FROM Messages WHERE senderId = $senderId ORDER BY creationDate DESC";
         $result = $connection->query($sql);
         $ret = array();
         if ($result == TRUE && $result->num_rows > 0) {
@@ -82,7 +82,7 @@ class Message {
     }
     
     static public function loadMessagesByReceiverId(mysqli $connection, $receiverId) {
-        $sql = "SELECT * FROM Messages WHERE receiverId = $receiverId";
+        $sql = "SELECT * FROM Messages WHERE receiverId = $receiverId ORDER BY creationDate DESC";
         $result = $connection->query($sql);
         $ret = array();
         if ($result == TRUE && $result->num_rows > 0) {
@@ -119,12 +119,35 @@ class Message {
     }
     
     public function saveToDB(mysqli $connection) {
-        $sql = "INSERT INTO Messages(senderId, receiverId, text, creationDate) VALUES($this->senderId, $this->receiverId, '$this->text', '$this->creationDate')";
-        $result = $connection->query($sql);
-        if ($result == TRUE) {
-            $this->id = $connection->insert_id;
-            return TRUE;
+        //$sql = "INSERT INTO Messages(senderId, receiverId, text, creationDate) VALUES($this->senderId, $this->receiverId, '$this->text', '$this->creationDate')";
+        //$result = $connection->query($sql);
+        //if ($result == TRUE) {
+        //    $this->id = $connection->insert_id;
+        //    return TRUE;
+        //}
+        $sql = "INSERT INTO Messages(senderId, receiverId, text, creationDate) VALUES(?, ?, ?, ?)";
+        $result = $connection->prepare($sql);
+        $result->bind_param("ssss", $this->senderId, $this->receiverId, $this->text, $this->creationDate);
+        $result->execute();
+        if ($result == true) {
+            return true;
         }
+        return FALSE;
+    }
+    
+    public function setSeeById(mysqli $connection, $id) {
+        //$sql = "UPDATE Messages SET see = 1 WHERE id = $id";
+        //$result = $connection->query($sql);
+        //if ($result == TRUE) {
+        //    return TRUE;
+        //}
+        $sql = "UPDATE Messages SET see = 1 WHERE id = ?";
+        $result = $connection->prepare($sql);
+        $result->bind_param("s", $id);
+        if ($result == true) {
+            return true;
+        }
+        return FALSE;
     }
 }
 

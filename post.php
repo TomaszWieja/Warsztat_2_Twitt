@@ -15,6 +15,13 @@ require_once 'src/Comment.php';
 require_once 'src/Tweet.php';
 require_once 'src/User.php';
 
+$userLogged = User::loadUserByID($conn, $_SESSION['user_id']);
+echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
+        "<br><a href='messages.php'>Twoje wiadomości</a>"
+        . "<br><a href='index.php'>Powrót do strony głównej</a>"
+        . "<br><a href='edit_user.php'>Edytuj profil</a>"
+        . "<br><a href='logout.php'>Wyloguj się</a><hr>";
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if ($_POST['text'] != "") {
         $comment = new Comment();

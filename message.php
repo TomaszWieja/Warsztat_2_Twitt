@@ -9,3 +9,26 @@
 //JOIN users ur ON ur.id = m.recipient
 //WHERE m.id = $_GET['id']
 //        - mysql_real_escape_string();
+session_start();
+require_once 'utils/check_login.php';
+require_once 'utils/connection.php';
+require_once 'src/Message.php';
+require_once 'src/User.php';
+
+$userLogged = User::loadUserByID($conn, $_SESSION['user_id']);
+echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
+        "<br><a href='edit_user.php'>Edytuj profil</a>"
+        . "<br><a href='logout.php'>Wyloguj się</a>"
+        . "<br><a href='messages.php'>Twoje wiadomości</a>"
+        . "<br><a href='index.php'>Powrót do strony głównej</a><hr>";
+
+if ($_SERVER['REQUEST_METHOD'] == "GET") {
+    if (isset($_GET['messageId'])) {
+        $message = Message::loadMessagesById($conn, $_GET['messageId']);
+        if (isset($_GET['see']) && $_GET['see'] == 1) {
+            $see = new Message();
+            $see->setSeeById($conn, $_GET['messageId']);
+        }
+        echo $message->getSenderId() . $message->getText() . $message->getCreationDate() . "<br>";
+    }
+}
