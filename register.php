@@ -10,14 +10,18 @@ require_once 'utils/connection.php';
 require_once 'src/User.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if ($_POST['email'] != "" && $_POST['username'] != "" && $_POST['password'] != "") {
-        $userEmail = User::loadUserByEmail($conn, $_POST['email']);
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $userName = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    
+    if ($email != "" && $userName != "" && $password != "") {
+        $userEmail = User::loadUserByEmail($conn, $email);
         
         if (!$userEmail) {
             $newUser = new User();
-            $newUser->setEmail($_POST['email']);
-            $newUser->setUsername($_POST['username']);
-            $newUser->setHashedPassword($_POST['password']);
+            $newUser->setEmail($email);
+            $newUser->setUsername($userName);
+            $newUser->setHashedPassword($password);
             $newUser->saveToDB($conn);
             $newUser->login();
             header("location: index.php");

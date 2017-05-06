@@ -25,25 +25,27 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername()
         . "<hr>";
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $newmessage = $_POST['text'];
-    if ($newmessage != "") {
-        $userId = $_POST['userId'];
+    $message = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if ($message != "") {
         $newMessage = new Message();
         $newMessage->setSenderId($_SESSION['user_id']);
         $newMessage->setReceiverId($userId);
         $newMessage->setCreationDate(date('Y-m-d H:i:s'));
-        $newMessage->setText($_POST['text']);
+        $newMessage->setText($message);
         $newMessage->saveToDB($conn);
 
         if ($newMessage) {
             echo "Wiadomość została wysłana<br>";
             echo "<a href='user.php?userId=" . $userId . "'>Powrót do strony użytkownika</a>";
         }
+    } else {
+        header('location: user.php?userId=' . $userId);
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $userId = (int) $_GET['userId'];
+    $userId = (int) filter_input(INPUT_GET, 'userId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     if (is_integer($userId)) {
         $user = User::loadUserByID($conn, $userId);
         $userName = $user->getUsername();

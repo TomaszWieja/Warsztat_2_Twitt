@@ -30,10 +30,11 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
 
 //pobieranie listy wpisu
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if ($_POST['text'] != "") {
+    $text = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if ($text != "") {
 
         $newTweet = new Tweet();
-        $newTweet->setText($_POST['text']);
+        $newTweet->setText($text);
         $newTweet->setUserId($_SESSION['user_id']);
         $newTweet->setCreationDate(date('Y-m-d H:i:s'));
         $newTweet->saveToDB($conn);

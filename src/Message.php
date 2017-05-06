@@ -144,6 +144,7 @@ class Message {
         $sql = "UPDATE Messages SET see = 1 WHERE id = ?";
         $result = $connection->prepare($sql);
         $result->bind_param("s", $id);
+        $result->execute();
         if ($result == true) {
             return true;
         }

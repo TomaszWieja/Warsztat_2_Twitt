@@ -23,11 +23,14 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
         . "<br><a href='index.php'>Powrót do strony głównej</a><hr>";
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    if (isset($_GET['messageId'])) {
-        $message = Message::loadMessagesById($conn, $_GET['messageId']);
-        if (isset($_GET['see']) && $_GET['see'] == 1) {
+    $messageId = (int) filter_input(INPUT_GET, 'messageId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $seeId = (int) filter_input(INPUT_GET, 'see', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if (isset($messageId)) {
+        $message = Message::loadMessagesById($conn, $messageId);
+        
+        if ($seeId == 1) {
             $see = new Message();
-            $see->setSeeById($conn, $_GET['messageId']);
+            $see->setSeeById($conn, $messageId);
         }
         echo $message->getSenderId() . $message->getText() . $message->getCreationDate() . "<br>";
     }

@@ -23,19 +23,21 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
         . "<br><a href='logout.php'>Wyloguj się</a><hr>";
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if ($_POST['text'] != "") {
+    $text = $text = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $postId = filter_input(INPUT_GET, 'postId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if ($text != "") {
         $comment = new Comment();
-        $comment->setText($_POST['text']);
-        $comment->setPostId($_GET['postId']);
+        $comment->setText($text);
+        $comment->setPostId($postId);
         $comment->setUserId($_SESSION['user_id']);
         $comment->setCreationDate(date('Y-m-d H:i:s'));
         $saveToDb = $comment->saveToDB($conn);
-        header("location: post.php?postId=" . $_GET['postId']);
+        header("location: post.php?postId=" . $postId);
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-    $postId = (int) $_GET['postId'];
+    $postId = (int) filter_input(INPUT_GET, 'postId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     if (is_integer($postId)) {
         $tweetById = Tweet::loadTweetById($conn, $postId);
         $userById = User::loadUserByID($conn, $tweetById->getUserId());

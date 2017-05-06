@@ -8,14 +8,20 @@ require_once 'src/User.php';
 require_once 'utils/connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    if ($_POST['email'] != "" && $_POST['password'] != "") {
-        $userEmail = User::loadUserByEmail($conn, $_POST['email']);
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    if (!$email) {
+        echo "Wprowadź poprawny email";
+        exit();
+    }
+    if ($email != "" && $password != "") {
+        $userEmail = User::loadUserByEmail($conn, $email);
         if ($userEmail) {
             $id = $userEmail->getId();
-            $email = $userEmail->getEmail();
+            $emailIns = $userEmail->getEmail();
             $hashedPassword = $userEmail->getHashedPassword();
               
-            if ($email == $_POST['email'] && password_verify($_POST['password'], $hashedPassword)) {
+            if ($emailIns == $email && password_verify($password, $hashedPassword)) {
                 
                 $login = User::loadUserByID($conn, $id);
                 $login->login();
@@ -24,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 echo "Błędny login lub hasło.";
             }
         } else {
-            echo "Podany email jest już zarejestrowany";
+            echo "Błędny login lub hasło.";
         }
     } else {
         echo "Proszę wypełnić wszytskie pola";
@@ -37,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <!--link do rejestracji konta-->
 <form action="" method="post">
     <label>Podaj email</label>
-    <input type="email" name="email"><br>
+    <input type="text" name="email"><br>
     <label>Podaj hasło</label>
     <input type="password" name="password"><br>
     <input type="submit" value="Zaloguj">
