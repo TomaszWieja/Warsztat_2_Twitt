@@ -11,9 +11,9 @@ require_once 'src/User.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    $userName = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $userName = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    
+
     if ($email != "" && $userName != "" && $password != "") {
         $userEmail = User::loadUserByEmail($conn, $email);
         
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             echo "Podany email: " . $email . " już istnieje, proszę podać inny email!";
         }
     } else {
-        echo "Proszę wypełnić wszytskie pola!";
+        echo "Proszę poprawnie wypełnić wszytskie pola!";
     }
 }
 ?>

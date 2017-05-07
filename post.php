@@ -22,17 +22,28 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
         . "<br><a href='edit_user.php'>Edytuj profil</a>"
         . "<br><a href='logout.php'>Wyloguj się</a><hr>";
 
+$textCut = "";
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $text = $text = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $text = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $postId = filter_input(INPUT_GET, 'postId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    if ($text != "") {
-        $comment = new Comment();
-        $comment->setText($text);
-        $comment->setPostId($postId);
-        $comment->setUserId($_SESSION['user_id']);
-        $comment->setCreationDate(date('Y-m-d H:i:s'));
-        $saveToDb = $comment->saveToDB($conn);
-        header("location: post.php?postId=" . $postId);
+
+    if (strlen($text) > 60) {
+        echo "Post nie może mieć więcej niż 60 znaków!<br>";
+        $textCut = substr($text, 0, 60);
+
+    } else {
+        if ($text != "") {
+            $comment = new Comment();
+            $comment->setText($text);
+            $comment->setPostId($postId);
+            $comment->setUserId($_SESSION['user_id']);
+            $comment->setCreationDate(date('Y-m-d H:i:s'));
+            $saveToDb = $comment->saveToDB($conn);
+            var_dump($saveToDb);
+            if ($saveToDb) {
+                header("location: post.php?postId=" . $postId);
+            }
+        }
     }
 }
 
@@ -52,6 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 <!--Wyświetlanie treści wpisu-->
 <!--Wyświetlanie komentarzy do wpisu (autor jako klikalny link)-->
 <form action="" method="post">
-    <input type="text" name="text"><br>
+    <textarea type="text" name="text" cols="100" rows="3" placeholder="Skomentuj..."><?php echo $textCut; ?></textarea><br>
     <input type="submit" value="Dodaj komentarz">
 </form>

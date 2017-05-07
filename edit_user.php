@@ -15,28 +15,30 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername()
         . "<hr>";
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $userName = filter_input(INPUT_POST, 'userName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    
+    if (isset($email) || isset($userName) || isset($password)) {
         
-    if ($email != "") {
-        $emailCheck = User::loadUserByEmail($conn, $email);
-        if (!$emailCheck || $emailCheck->getEmail() == $email) {
-            $userLogged->setEmail($email);
-        } else {
-            echo "Podany email już istnieje, proszę podać inny.";
+        if ($email != "") {
+            $emailCheck = User::loadUserByEmail($conn, $email);
+            if (!$emailCheck || $emailCheck->getEmail() == $email) {
+                $userLogged->setEmail($email);
+            } else {
+                echo "Podany email już istnieje, proszę podać inny.";
+            }
         }
-    }
-    if ($userName != "") {
-        $userLogged->setUsername($userName);
-    }
-    if ($password != "") {
-        $userLogged->setHashedPassword($password);
-    }
-    $result = $userLogged->saveToDB($conn);
-    if ($result) {
-        header('location: edit_user.php');
+        if ($userName != "") {
+            $userLogged->setUsername($userName);
+        }
+        if ($password != "") {
+            $userLogged->setHashedPassword($password);
+        }
+        $result = $userLogged->saveToDB($conn);
+        if ($result) {
+            header('location: edit_user.php');
+        }
     }
 }
 ?>
@@ -56,7 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     <input type="submit" value="Usuń konto">
 </form>
 <?php
+
 $delete = filter_input(INPUT_POST, 'delete', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
 if (isset($delete)) {
     echo    "<form action='' method='post'>"
                 . "<label>Twoje konto będzie trwale usunięte, czy jesteś pewien?</label><br>"

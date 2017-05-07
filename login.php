@@ -10,10 +10,7 @@ require_once 'utils/connection.php';
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    if (!$email) {
-        echo "Wprowadź poprawny email";
-        exit();
-    }
+
     if ($email != "" && $password != "") {
         $userEmail = User::loadUserByEmail($conn, $email);
         if ($userEmail) {
@@ -33,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             echo "Błędny login lub hasło.";
         }
     } else {
-        echo "Proszę wypełnić wszytskie pola";
+        echo "Błędny login lub hasło.";
     }
 }
 ?>

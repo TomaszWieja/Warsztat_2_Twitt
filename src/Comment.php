@@ -101,7 +101,7 @@ class Comment {
         $result->bind_param("ssss", $this->userId, $this->postId, $this->creationDate, $this->text);
         $result->execute();
         if ($result == true) {
-            return true;
+            return TRUE;
         }
         return FALSE;
     }

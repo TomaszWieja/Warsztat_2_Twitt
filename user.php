@@ -23,24 +23,30 @@ echo "Jesteś zalogowany jako: " . $userLogged->getUsername()
         . "<br><a href='index.php'>Powrót do strony głównej</a>"
         . "<br><a href='logout.php'>Wyloguj się</a>"
         . "<hr>";
-
+$messageCut = "";
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $message = filter_input(INPUT_POST, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    if ($message != "") {
-        $newMessage = new Message();
-        $newMessage->setSenderId($_SESSION['user_id']);
-        $newMessage->setReceiverId($userId);
-        $newMessage->setCreationDate(date('Y-m-d H:i:s'));
-        $newMessage->setText($message);
-        $newMessage->saveToDB($conn);
-
-        if ($newMessage) {
-            echo "Wiadomość została wysłana<br>";
-            echo "<a href='user.php?userId=" . $userId . "'>Powrót do strony użytkownika</a>";
-        }
+    
+    if (strlen($message) > 255) {
+        echo "Post nie może mieć więcej niż 255 znaków!<br>";
+        $messageCut = substr($message, 0, 255);
     } else {
-        header('location: user.php?userId=' . $userId);
+        if ($message != "") {
+            $newMessage = new Message();
+            $newMessage->setSenderId($_SESSION['user_id']);
+            $newMessage->setReceiverId($userId);
+            $newMessage->setCreationDate(date('Y-m-d H:i:s'));
+            $newMessage->setText($message);
+            $newMessage->saveToDB($conn);
+
+            if ($newMessage) {
+                echo "Wiadomość została wysłana<br>";
+                echo "<a href='user.php?userId=" . $userId . "'>Powrót do strony użytkownika</a>";
+            }
+        } else {
+            header('location: user.php?userId=' . $userId);
+        }
     }
 }
 
@@ -56,14 +62,14 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $commentsByTweetId = Comment::loadAllCommentsByPostId($conn, $row->getId());
             echo "Ilość komentarzy: " . count($commentsByTweetId) . "<br>";
         }
-        echo '<form action="" method="post">  
-                <input type="text" name="text"><br>
-                <input type="hidden" name="userId" value="' . $userId . '">
-                <input type="submit" value="Wyślij wiadomość">
-            </form>';
+        
     }
 }
-
+echo '<form action="" method="post">  
+                <textarea type="text" name="text" cols="100" rows="3" placeholder="Wpisz wiadomość...">' . $messageCut . '</textarea><br>
+                <input type="hidden" name="userId" value="' . $userId . '">
+                <input type="submit" value="Wyślij wiadomość do użytkownika">
+            </form>';
 ?>
 <!--Formularz do wysyłania wiadomości do użytkownika-->
 

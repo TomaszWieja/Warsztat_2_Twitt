@@ -16,22 +16,23 @@ require_once 'src/Message.php';
 require_once 'src/User.php';
 
 $userLogged = User::loadUserByID($conn, $_SESSION['user_id']);
-echo "Jesteś zalogowany jako: " . $userLogged->getUsername() .
-        "<br><a href='edit_user.php'>Edytuj profil</a>"
-        . "<br><a href='logout.php'>Wyloguj się</a>"
+echo "Jesteś zalogowany jako: " . $userLogged->getUsername()
         . "<br><a href='messages.php'>Twoje wiadomości</a>"
-        . "<br><a href='index.php'>Powrót do strony głównej</a><hr>";
+        . "<br><a href='index.php'>Powrót do strony głównej</a>"
+        . "<br><a href='edit_user.php'>Edytuj profil</a>"
+        . "<br><a href='logout.php'>Wyloguj się</a><hr>";
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
     $messageId = (int) filter_input(INPUT_GET, 'messageId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $seeId = (int) filter_input(INPUT_GET, 'see', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     if (isset($messageId)) {
         $message = Message::loadMessagesById($conn, $messageId);
-        
+        $messageSenderName = User::loadUserByID($conn, $message->getSenderId());
+        $messageReceiverName = User::loadUserByID($conn, $message->getReceiverId());
         if ($seeId == 1) {
             $see = new Message();
             $see->setSeeById($conn, $messageId);
         }
-        echo $message->getSenderId() . $message->getText() . $message->getCreationDate() . "<br>";
+        echo "Nadawca: <a href='user.php?userId=" . $messageSenderName->getId() . "'>" . $messageSenderName->getUsername() . "</a><br>Odbiorca: <a href='user.php?userId=" . $messageReceiverName->getId() . "'>" . $messageReceiverName->getUsername() . "</a><br>Data wysłania: " . $message->getCreationDate() . "<br>Treść wiadomości:<br>" . $message->getText();
     }
 }
